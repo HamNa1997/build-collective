@@ -4,8 +4,19 @@
       <img alt="Vue logo" src="./assets/logo.svg" class="logo-img" />
       <div class="logo-name">Build Collective</div>
     </router-link>
-    <div class="navbar-items" v-if="store.state.account.address">
+    <div class="navbar-items">
+    <div class="navbar-item" v-if="store.state.account.address">
       <router-link to="/account" class="navbar-item">Account</router-link>
+    </div>
+    <div class="navbar-item" v-if="store.state.account.address">
+      <router-link to="/createProject" class="navbar-item">Add a project</router-link>
+    </div>
+    <div class="navbar-item" v-if="store.state.account.address">
+      <router-link to="/projects" class="navbar-item">Projects</router-link>
+    </div>
+    <div class="navbar-item" v-if="store.state.account.address">
+      <router-link to="/myprojects" class="navbar-item">My projects</router-link>
+    </div>
     </div>
   </nav>
   <router-view />

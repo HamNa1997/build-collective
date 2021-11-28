@@ -13,6 +13,24 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Account',
     component: () => import('@/views/Account.vue'),
   },
+  {
+    path: '/createProject',
+    name: 'CreateProject',
+    component: () =>import('@/views/CreateProject.vue')
+
+  },
+  {
+    path: '/projects',
+    name: 'Projects',
+    component: () =>import('@/views/Projects.vue')
+
+  },
+  {
+    path: '/myprojects',
+    name: 'Myprojects',
+    component: () =>import('@/views/Myprojects.vue')
+
+  },
 ]
 
 const router = createRouter({

@@ -1,16 +1,31 @@
 <template lang="html">
   <div class="home" v-if="!account">
-    <form @submit.prevent="signUp">
+    <form @submit.prevent>
       <card
         title="Enter your username here"
         subtitle="Type directly in the input and hit enter. All spaces will be converted to _"
       >
+        <input
+          type="checkbox"
+          id="checkbox"
+          v-model="isEntreprise"
+        />
+        <label for="checkbox"> Entreprise : {{isEntreprise}} </label>
         <input
           type="text"
           class="input-username"
           v-model="username"
           placeholder="Type your username here"
         />
+        <input
+          type="text"
+          class="input-username"
+          v-model="entrepriseName"
+          :disabled="!isEntreprise"
+          v-if="isEntreprise"
+          placeholder="Type the entreprise name here"
+        />
+        <button @click="signUp">SIGN UP</button>
       </card>
     </form>
   </div>
@@ -21,18 +36,23 @@
         :subtitle="`${balance} Ξ\t\t${account.balance} Tokens`"
         :gradient="true"
       >
-        <div class="explanations">
-          This data has been fetched from the blockchain. You started by
-          connecting MetaMask, and you fetched your data by reading the
-          blockchain. Try to modify the code to see what's happening!
-        </div>
+        
         <div class="explanations">
           On your account on the contract, you have
           {{ account.balance }} tokens. If you click
           <button class="button-link" @click="addTokens">here</button>, you can
-          add some token to your account. Just give it a try! And think to put
-          an eye on Ganache!
+          add some token to your account. 
         </div>
+
+      </card>
+      <card 
+        v-if="entreprise"
+        title="Entreprise"
+        :subtitle="entreprise.name"
+        :gradient="true"
+        >
+      <div class="explanations"> Balance : {{entreprise.Entreprisebalance}}</div>
+
       </card>
     </div>
   </div>
@@ -54,20 +74,41 @@ export default defineComponent({
   },
   data() {
     const account = null
+    const entreprise = null
     const username = ''
-    return { account, username }
+    const isEntreprise = false
+    const entrepriseName = ''
+    return { account, username, isEntreprise, entrepriseName, entreprise }
   },
   methods: {
     async updateAccount() {
       const { address, contract } = this
-      this.account = await contract.methods.user(address).call()
+      const account = await contract.methods.user(address).call()
+      this.account = account
+      
+      if(account.entreprises){
+     
+      const entreprise = await contract.methods.entreprise(account.username).call()
+      this.entreprise = entreprise
+      
+      }
     },
     async signUp() {
-      const { contract, username } = this
+      const { contract, username, isEntreprise, entrepriseName } = this
       const name = username.trim().replace(/ /g, '_')
+      if(!isEntreprise){
       await contract.methods.signUp(name).send()
+      console.log('PARTICULIER')
+      }
+      if(isEntreprise){
+      console.log(entrepriseName)
+      await contract.methods.signupEntreprise(username,entrepriseName).send()
+      console.log('ENTREPRISE')
+      }
       await this.updateAccount()
       this.username = ''
+      this.isEntreprise = false
+      this.entrepriseName = ''
     },
     async addTokens() {
       const { contract } = this
@@ -78,7 +119,15 @@ export default defineComponent({
   async mounted() {
     const { address, contract } = this
     const account = await contract.methods.user(address).call()
-    if (account.registered) this.account = account
+    console.log('mounted')
+    if (account.registered) 
+    {
+      this.account = account
+      if (account.entreprises) {
+        const entreprise = await contract.methods.entreprise(account.username).call()
+        this.entreprise = entreprise
+      }
+    }
   },
 })
 </script>
