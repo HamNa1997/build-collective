@@ -1,10 +1,3 @@
-Project 3 Daar :
-
-Done by :
-
--HAMLIL Mohamed Nazih
--ZERKA Nassim
-
 Frontend (Vue) + Backend(Solidity) for a Dapp (BuildCollective)
 
 To test :
